@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <h:outputStylesheet library="webjars" name="primeflex/2.0.0/primeflex.min.css" />
+        <title>Visualizzazione statistiche accessi</title>
+        <style>
+            .card {
+                background: var(--surface-e);
+                padding: 2rem;
+                box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%);
+                border-radius: 4px;
+                margin-bottom: 2rem;
+            }
+            .title {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+                font-size: 1.5rem;
+            }
+        </style>
+        <f:metadata>
+            <f:viewAction action="#{chartController.init()}" />
+        </f:metadata>
+    </h:head>
+    <h:body>
+        <div class="p-grid">
+            <div class="p-col">
+                <h:form id="mainForm">
+                    <div class="p-text-center title">Statistiche di accesso WebGIS USR</div>
+                    <div class="p-text-center"><p:button id="refresh" value="Aggiorna" icon="pi pi-refresh"/></div>
+                    <div class="card">
+                        <p:outputLabel for="annoOption" value="Selezionare l'anno:" />&nbsp;&nbsp;
+                        <p:selectOneMenu id="annoOption" value="#{chartController.anno}">
+                            <f:selectItems value="#{chartController.anni}" var="v" itemValue="#{v}" itemLabel="#{v}" />
+                            <p:ajax event="change" listener="#{chartController.update()}" update="annoChart,annoMeseOption,annoMeseChart" />
+                        </p:selectOneMenu>
+                        <p:lineChart id="annoChart" model="#{chartController.annoChart}" style="width: 100%; height: 500px;"/>            
+                    </div>
+
+                    <div class="card">
+                        <p:outputLabel for="annoMeseOption" value="Selezionare il mese:" />&nbsp;&nbsp;
+                        <p:selectOneMenu id="annoMeseOption" value="#{chartController.mese}">
+                            <f:selectItems value="#{chartController.mesiAnno}" var="v" itemValue="#{v}" itemLabel="#{chartController.decodeMese(v)}" />
+                            <p:ajax event="change" listener="#{chartController.loadAnnoMeseChart()}" update="annoMeseChart" />
+                        </p:selectOneMenu>
+                        <p:lineChart id="annoMeseChart" model="#{chartController.annoMeseChart}" style="width: 100%; height: 500px;"/>            
+                    </div>            
+                </h:form>            
+            </div>
+        </div>
+    </h:body>
+</html>
+
