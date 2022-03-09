@@ -7,6 +7,7 @@ package it.usr.gis.ws;
 
 import it.usr.gis.domain.Centroide;
 import it.usr.gis.domain.Dettaglio;
+import it.usr.gis.domain.ManifDettaglio;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -141,6 +142,37 @@ public class GisServiceV2 extends CommonService {
             }
                                     
             return (ld.size()>0) ? Response.ok(ld).build() : Response.status(Response.Status.NOT_FOUND).build();  
+        }
+        catch(SQLException sqle) {
+            return Response.serverError().entity(new Error(sqle)).build();
+        }                              
+    }
+    
+    @GET
+    @Path("manif/detail/{idPoligon: [0-9]*}")
+    @Produces({ MediaType.APPLICATION_JSON })
+    public Response getManifestazioniDetail(@PathParam("idPoligon") int idPoligon) {
+        String sql = "SELECT id, codice_manifestazione, data_manifestazione FROM gis_manifestaz_dettaglio WHERE id_poligon = ?";
+        try (Connection con = dsDecreti.getConnection()) {            
+            List<ManifDettaglio> lmd = new ArrayList<>();
+            try(PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setInt(1, idPoligon);
+                ManifDettaglio md;
+                try (ResultSet rs = ps.executeQuery()) {                
+                    while(rs.next()) { 
+                        md = new ManifDettaglio();
+                        
+                        md.setId(rs.getInt(1));
+                        md.setIdPoligon(idPoligon);
+                        md.setCodiceManifestazione(rs.getString(2));
+                        md.setDataRichiesta(dateToString(rs.getDate(3)));
+                        
+                        lmd.add(md);
+                    }
+                }
+            }
+                                    
+            return (lmd.size()>0) ? Response.ok(lmd).build() : Response.status(Response.Status.NOT_FOUND).build();  
         }
         catch(SQLException sqle) {
             return Response.serverError().entity(new Error(sqle)).build();

@@ -22,12 +22,12 @@ import java.util.logging.Logger;
  * @author riccardo.iovenitti
  */
 public abstract class CommonService {
-    /**********************************************************************
+    /* *********************************************************************
      *
      *                        INTERNAL USE
-     *
-     **********************************************************************/
-    
+     *   
+     * *********************************************************************/
+        
     protected Geometry[] geomToDomain(String geom) {
         final Geometry[] geomType = new Geometry[]{};
         final Coordinate[] coordType = new Coordinate[]{};

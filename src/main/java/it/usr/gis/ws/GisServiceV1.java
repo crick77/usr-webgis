@@ -41,7 +41,37 @@ public class GisServiceV1 extends CommonService {
     @Produces({ MediaType.APPLICATION_JSON })
     public Response getPoligoni(@PathParam("upper") String upper, @PathParam("lower") String lower) {        
         try {
-            final String sql = "SELECT gp.id, gp.id_pratica, IF(gd.stato is null, -100, gd.stato) as avanzamento, ST_AsText(gp.geometria) as geometria FROM gis_privata AS gp LEFT JOIN gis_dettaglio gd on gp.id_pratica = gd.id_pratica WHERE MBRContains(GeomFromText(?), gp.geometria) AND gp.id_layer = 1";
+            final String sql = "SELECT gp.id, gp.id_pratica, IF(gd.stato is null, -100, gd.stato) as avanzamento, ST_AsText(gp.geometria) as geometria FROM gis_privata AS gp LEFT JOIN gis_dettaglio gd on gp.id_pratica = gd.id_pratica WHERE MBRContains(GeomFromText(?), gp.geometria) AND gp.id_layer = 1 AND gp.abilitato = 1";
+            List<Poligono> poligoni = new ArrayList<>();
+            try (Connection con = dsDecreti.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+                String bBox = "LINESTRING("+upper.replace(",", " ")+", "+lower.replace(",", " ")+")";
+                ps.setString(1, bBox);
+                try (ResultSet rs = ps.executeQuery()) {                
+                    while(rs.next()) {
+                        int id = rs.getInt(1);
+                        int idPratica = rs.getInt(2);
+                        int avanzamento = rs.getInt(3);
+                        String geom = rs.getString(4);
+                        
+                        Poligono p = new Poligono(id, idPratica, avanzamento, geomToDomain(geom));
+                        poligoni.add(p);
+                    }
+                }
+            }
+                                    
+            return Response.ok(poligoni).build();
+        }   
+        catch(SQLException sqle) {
+            return Response.serverError().entity(new Error(sqle)).build();
+        }
+    }
+    
+    @GET
+    @Path("manif/polys/{upper}/{lower}")
+    @Produces({ MediaType.APPLICATION_JSON })
+    public Response getManifestazioniPoligoni(@PathParam("upper") String upper, @PathParam("lower") String lower) {        
+        try {
+            final String sql = "SELECT gp.id, gp.id_pratica, IF(gd.stato is null, -100, gd.stato) as avanzamento, ST_AsText(gp.geometria) as geometria FROM gis_privata AS gp LEFT JOIN gis_dettaglio gd on gp.id_pratica = gd.id_pratica WHERE MBRContains(GeomFromText(?), gp.geometria) AND gp.id_layer = 3 AND gp.abilitato = 1";
             List<Poligono> poligoni = new ArrayList<>();
             try (Connection con = dsDecreti.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
                 String bBox = "LINESTRING("+upper.replace(",", " ")+", "+lower.replace(",", " ")+")";
@@ -71,7 +101,7 @@ public class GisServiceV1 extends CommonService {
     @Produces({ MediaType.APPLICATION_JSON })
     public Response getPoligoni2(@PathParam("upper") String upper, @PathParam("lower") String lower) {        
         try {
-            final String sql = "SELECT gp.id, gp.id_pratica, IF(gd.stato is null, -100, gd.stato) as avanzamento, ST_AsText(gp.geometria) as geometria FROM gis_privata AS gp LEFT JOIN gis_dettaglio gd on gp.id_pratica = gd.id_pratica WHERE ST_Contains(GeomFromText(?), gp.geometria) AND gp.id_layer = 1";
+            final String sql = "SELECT gp.id, gp.id_pratica, IF(gd.stato is null, -100, gd.stato) as avanzamento, ST_AsText(gp.geometria) as geometria FROM gis_privata AS gp LEFT JOIN gis_dettaglio gd on gp.id_pratica = gd.id_pratica WHERE ST_Contains(GeomFromText(?), gp.geometria) AND gp.id_layer = 1 AND gp.abilitato = 1";
             List<Poligono> poligoni = new ArrayList<>();
             try (Connection con = dsDecreti.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
                 StringJoiner bBox = new StringJoiner(",", "POLYGON((", "))");

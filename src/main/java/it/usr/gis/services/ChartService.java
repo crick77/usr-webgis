@@ -10,10 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -54,7 +51,7 @@ public class ChartService {
     public List<Integer> getMesiAnno(int anno) {
         List<Integer> lMesi = new ArrayList<>();
         try(Connection c = dsDecreti.getConnection()) {
-            try(PreparedStatement ps = c.prepareStatement("SELECT DISTINCT MONTH(data_accesso) AS mese FROM gis_accessi WHERE YEAR(data_accesso) = ? ORDER BY mese")) {
+            try(PreparedStatement ps = c.prepareStatement("SELECT DISTINCT MONTH(data_accesso) AS mese FROM gis_accessi WHERE YEAR(data_accesso) = ? ORDER BY mese DESC")) {
                 ps.setInt(1, anno);
                 try(ResultSet rs = ps.executeQuery()) {                    
                     while(rs.next()) {
