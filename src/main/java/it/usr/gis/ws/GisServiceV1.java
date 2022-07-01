@@ -318,7 +318,7 @@ public class GisServiceV1 extends CommonService {
                   "                    ON l_tipo_decreto.id_tipo_decreto=decreti.id_tipo_decreto " +
                   "                    WHERE decreti.da_rendicontare = 1 AND decreti.numero_provvedimento is not NULL  " +
                   "                    	AND decreti.id_tipo_provvedimento>0  " +
-                  "                    	AND decreti.id_tipo_decreto IN (1, 2, 3, 5, 11, 15, 18, 19)  " +
+                  "                    	AND decreti.id_tipo_decreto IN (1, 2, 3, 5, 11, 15, 18, 19, 21)  " +
                   "                    	AND decreti.id_tipo_pratica IN (1,2,11) " +
                   "                    	AND decreti.ID_Pratica = ? " +
                   "                    )) as t " +
