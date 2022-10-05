@@ -42,7 +42,7 @@ public class GisServiceV2 extends CommonService {
     @Produces({ MediaType.APPLICATION_JSON })
     public Response searchPratica(@PathParam("idPratica") Integer idPratica) {
         try {                        
-            final String sql = "SELECT DISTINCT gp.id_pratica FROM gis_privata AS gp WHERE gp.id_pratica = ?";
+            final String sql = "SELECT DISTINCT gp.id_pratica FROM gis_privata AS gp WHERE gp.id_pratica = ? AND gp.id_layer = 1";
             List<Integer> results = new ArrayList<>();
             try (Connection con = dsDecreti.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
                 ps.setInt(1, idPratica);

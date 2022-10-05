@@ -134,7 +134,7 @@ public class GisServiceV1 extends CommonService {
     @Produces({ MediaType.APPLICATION_JSON })
     public Response getPoligoniByIdPratica(@PathParam("idPratica") int idPratica) {
         try {
-            final String sql = "SELECT gp.id, IF(gd.stato is null, -100, gd.stato) as avanzamento, ST_AsText(gp.geometria) as geometria FROM gis_privata AS gp LEFT JOIN gis_dettaglio gd on gp.id_pratica = gd.id_pratica WHERE gp.id_pratica = ?";
+            final String sql = "SELECT gp.id, IF(gd.stato is null, -100, gd.stato) as avanzamento, ST_AsText(gp.geometria) as geometria FROM gis_privata AS gp LEFT JOIN gis_dettaglio gd on gp.id_pratica = gd.id_pratica WHERE gp.id_pratica = ? AND gp.id_layer = 1";
             List<Poligono> poligoni = new ArrayList<>();
             try (Connection con = dsDecreti.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
                 ps.setInt(1, idPratica);
