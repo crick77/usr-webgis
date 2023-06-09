@@ -293,7 +293,7 @@ public class GisServiceV1 extends CommonService {
             
             sql = "select t.tipo_atto, t.provvedimento, DATE_FORMAT(t.data_evento, '%d-%m-%Y') as data_evento, t.importo, t.src from ((SELECT " +
                   "                    	l_tipo_passo.testo_passo AS tipo_atto, " +
-                  "                    	CONCAT('comunicazione n. ', it.protocollo) AS provvedimento, " +
+                  "                    	CONCAT(IF(codice_passo=50, 'n. ', 'comunicazione n. '), it.protocollo) AS provvedimento, " +
                   "                    	it.data_evento, " +
                   "                    	-1 AS importo, " +
                   "                        'iter' as src " +
